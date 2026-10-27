@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>पकड़ के दिखाओ! - Viral Challenge</title>
+    
+    <!-- WhatsApp & Social Media Rich Preview Meta Tags -->
+    <meta property="og:title" content="⚠️ आपके लिए एक सीक्रेट चैलेंज आया है!">
+    <meta property="og:description" content="हिम्मत है तो इस भागते हुए बटन को पकड़कर दिखाओ और अपना छुपा हुआ मज़ेदार मैसेज पढ़ो!">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&auto=format&fit=crop&q=60">
+    <meta property="og:type" content="website">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        /* लाइव सोशल प्रूफ काउंटर */
+        #social-proof {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #2f3542;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        /* मुख्य भागने वाला बटन */
+        #runner {
+            position: absolute;
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 71, 87, 0.4);
+            transition: transform 0.05s ease-out;
+            z-index: 10;
+            touch-action: none;
+        }
+        /* पीछे छूटने वाले शब्द - ओवरलैप रोकने के लिए सुरक्षित स्टाइल */
+        .story-word {
+            position: absolute;
+            font-size: 1.3rem;
+            color: #2f3542;
+            font-weight: 600;
+            opacity: 0;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 4px 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            animation: fadeIn 0.4s forwards;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.6); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        /* निर्देश */
+        #instructions {
+            position: absolute;
+            bottom: 140px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #57606f;
+            font-size: 0.95rem;
+            text-align: center;
+            pointer-events: none;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 6px 14px;
+            border-radius: 20px;
+            z-index: 5;
+        }
+        /* फिनिश पॉपअप / शेयर स्क्रीन */
+        #popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 90%;
+            width: 380px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        #popup.active {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        #popup h2 {
+            color: #2f3542;
+            margin-bottom: 5px;
+        }
+        #popup p {
+            color: #747d8c;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+        }
+        .btn-whatsapp {
+            background-color: #25D366;
+            color: white;
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+        }
+        .btn-create {
+            background-color: #ff4757;
+            color: white;
+        }
+        /* होम स्क्रीन का नीचे वाला क्रिएटर बॉक्स */
+        #creator-box {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 12px 15px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 5;
+            max-width: 95%;
+            width: 380px;
+        }
+        .input-group {
+            display: flex;
+            gap: 8px;
+        }
+        .input-group input {
+            flex: 1;
+            border: 1px solid #ced6e0;
+            padding: 8px 12px;
+            border-radius: 15px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+        .input-group button {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        /* 1-क्लिक टेम्पलेट्स */
+        .templates-container {
+            display: flex;
+            gap: 5px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .template-chip {
+            background: #f1f2f6;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            white-space: nowrap;
+            color: #2f3542;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .template-chip:hover {
+            background: #dfe4ea;
+        }
+        .link-output-box {
+            display: none;
+            background: #f1f2f6;
+            padding: 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        .link-output-box input {
+            width: 100%;
+            padding: 5px;
+            font-size: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            text-align: center;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- लाइव सोशल प्रूफ काउंटर -->
+    <div id="social-proof">🔥 आज <strong>14,820</strong> लोगों ने यह चैलेंज खेला है!</div>
+
+    <div id="instructions">इस लाल बटन को छूकर या पकड़कर दिखाओ! 🏃‍♂️</div>
+    <div id="runner">पकड़ो मुझे!</div>
+
+    <!-- फिनिश होने पर दिखने वाला पॉपअप -->
+    <div id="popup">
+        <h2>🎉 कमाल कर दिया!</h2>
+        <p id="score-text">आपने इस सीक्रेट मैसेज को ढूंढ लिया।</p>
+        <a id="whatsapp-share" href="#" class="btn btn-whatsapp" target="_blank">📱 WhatsApp पर शेयर करें</a>
+        
+        <!-- नया लिंक बनाने का रिसेट ऑप्शन -->
+        <div style="margin-top: 12px; border-top: 1px solid #eee; padding-top: 12px; text-align: left;">
+            <label style="font-size: 0.8rem; color: #57606f; font-weight: bold;">अपना खुद का चैलेंज बनाएं:</label>
+            <input type="text" id="popupCustomInput" placeholder="यहाँ अपना नया मैसेज लिखें..." style="width: 100%; padding: 8px; border: 1px solid #ced6e0; border-radius: 12px; outline: none; margin: 6px 0; font-size: 0.85rem;">
+            <button class="btn btn-create" onclick="makeCustomFromPopup()">🚀 नया लिंक जनरेट करें</button>
+            
+            <div id="popupLinkBox" class="link-output-box" style="margin-top: 8px;">
+                <input type="text" id="popupGeneratedLink" readonly>
+                <button class="btn" style="background: #2ed573; color: #fff; padding: 6px; font-size: 0.8rem;" onclick="copyPopupLink()">📋 लिंक कॉपी करें</button>
+            </div>
+        </div>
+        
+        <button class="btn" onclick="location.reload()" style="background: #f1f2f6; color: #2f3542; margin-top: 8px;">🔄 दोबारा खेलें</button>
+    </div>
+
+    <!-- होम स्क्रीन का नीचे वाला बॉक्स -->
+    <div id="creator-box">
+        <div class="templates-container">
+            <button class="template-chip" onclick="setTemplate('💖 क्रश: तुम मुझे बहुत अच्छे लगते हो!')">💖 क्रश</button>
+            <button class="template-chip" onclick="setTemplate('😂 रोस्ट: तू इस दुनिया का सबसे बड़ा कंजूस है!')">😂 रोस्ट</button>
+            <button class="template-chip" onclick="setTemplate('🎂 बर्थडे: हैप्पी बर्थडे भाई! पार्टी कब है?')">🎂 बर्थडे</button>
+            <button class="template-chip" onclick="setTemplate('😈 प्रैंक: तेरी पोल खुल चुकी है, जल्दी कॉल कर!')">😈 प्रैंक</button>
+        </div>
+        <div class="input-group">
+            <input type="text" id="customInput" placeholder="अपना खुद का सीक्रेट मैसेज लिखें...">
+            <button onclick="makeCustom()">बनाएं</button>
+        </div>
+        <div id="homeLinkBox" class="link-output-box">
+            <input type="text" id="homeGeneratedLink" readonly>
+            <button class="btn" style="background: #2ed573; color: #fff; padding: 6px; font-size: 0.8rem;" onclick="copyHomeLink()">📋 लिंक कॉपी करें</button>
+        </div>
+    </div>
+
+    <script>
+        // वेब ऑडियो API से मजेदार पॉप साउंड
+        function playPopSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.08);
+            } catch(e) {}
+        }
+
+        // 🎆 स्क्रीन के बीच से चारों दिशाओं (360°) में फटने वाले फटाके / फुहारें
+        function triggerConfetti() {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.backgroundColor = ['#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#9b59b6', '#ff6b81', '#f1c40f'][Math.floor(Math.random()*7)];
+                confetti.style.left = centerX + 'px';
+                confetti.style.top = centerY + 'px';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50% ' : '0%';
+                confetti.style.zIndex = '1000';
+                confetti.style.pointerEvents = 'none';
+
+                // रैंडम एंगल और दूरी ताकि चारों तरफ फैल सकें
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * Math.max(window.innerWidth, window.innerHeight) * 0.6;
+                const targetX = centerX + Math.cos(angle) * distance;
+                const targetY = centerY + Math.sin(angle) * distance;
+
+                confetti.style.transition = 'all 1.5s cubic-bezier(0.1, 1, 0.1, 1)';
+                document.body.appendChild(confetti);
+
+                setTimeout(() => {
+                    confetti.style.left = targetX + 'px';
+                    confetti.style.top = targetY + 'px';
+                    confetti.style.transform = `rotate(${Math.random() * 720}deg) scale(${Math.random() + 0.5})`;
+                    confetti.style.opacity = '0';
+                }, 20);
+
+                setTimeout(() => confetti.remove(), 1500);
+            }
+        }
+
+        // Base64 Encoding/Decoding
+        function encodeSecret(str) {
+            return btoa(encodeURIComponent(str));
+        }
+
+        function decodeSecret(str) {
+            try {
+                return decodeURIComponent(atob(str));
+            } catch (e) {
+                return null;
+            }
+        }
+
+        const runner = document.getElementById('runner');
+        const popup = document.getElementById('popup');
+        const whatsappShare = document.getElementById('whatsapp-share');
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const encodedMsg = urlParams.get('msg');
+        
+        const defaultQuotesPool = [
+            "ज़िंदगी एक खूबसूरत सफर है, इसे डरकर नहीं हंसकर जियो!",
+            "मानो तो हर मुश्किल आसान है, मेहनत करो जीत पक्की है!",
+            "फरेब की इस दुनिया में खुद पर भरोसा रखना ही सबसे बड़ी ताकत है।",
+            "मुस्कुराना सीख लो, बिना माचिस के ही लोगों को जलाना आ जाएगा!",
+            "फर्श से अर्श तक पहुँचने के लिए रातों की नींद उड़ानी पड़ती है।"
+        ];
+
+        let storyWords = [];
+
+        if (encodedMsg) {
+            const decodedText = decodeSecret(encodedMsg);
+            if (decodedText) {
+                storyWords = decodedText.split(' ');
+            }
+        }
+
+        if (storyWords.length === 0) {
+            const randomQuote = defaultQuotesPool[Math.floor(Math.random() * defaultQuotesPool.length)];
+            storyWords = randomQuote.split(' ');
+        }
+        
+        let wordIndex = 0;
+        let isFinished = false;
+        let startTime = Date.now();
+        
+        // बटन की शुरुआत स्क्रीन के सेंटर से
+        let currentX = window.innerWidth / 2 - 60;
+        let currentY = window.innerHeight / 2 - 25;
+        
+        runner.style.left = currentX + 'px';
+        runner.style.top = currentY + 'px';
+
+        // पिछले छोड़े गए शब्दों की पोजीशन स्टोर करने के लिए ताकि ओवरलैप न हो
+        const droppedPositions = [];
+
+        // माउस और टच मूवमेंट
+        window.addEventListener('pointermove', (e) => {
+            if (isFinished) return;
+
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            
+            const runnerRect = runner.getBoundingClientRect();
+            const runnerX = runnerRect.left + runnerRect.width / 2;
+            const runnerY = runnerRect.top + runnerRect.height / 2;
+            
+            const distance = Math.hypot(mouseX - runnerX, mouseY - runnerY);
+            
+            if (distance < 110) {
+                const angle = Math.atan2(runnerY - mouseY, runnerX - mouseX);
+                const oldX = currentX;
+                const oldY = currentY;
+                
+                const speed = 160; 
+                currentX += Math.cos(angle) * speed;
+                currentY += Math.sin(angle) * speed;
+                
+                // 👉 कोनों (Edges) में फंसने से बचाने के लिए मार्जिन बढ़ाया गया है (Min 80px, Max स्क्रीन साइज़ से कम)
+                const marginX = 100;
+                const marginY = 120;
+                currentX = Math.max(marginX, Math.min(window.innerWidth - marginX, currentX));
+                currentY = Math.max(80, Math.min(window.innerHeight - marginY, currentY));
+                
+                runner.style.left = currentX + 'px';
+                runner.style.top = currentY + 'px';
+                
+                if (wordIndex < storyWords.length) {
+                    dropWord(storyWords[wordIndex], oldX, oldY);
+                    wordIndex++;
+                    playPopSound();
+                    runner.innerText = `भाग रहा है (${wordIndex}/${storyWords.length})`;
+                } else {
+                    isFinished = true;
+                    const totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+                    
+                    runner.style.display = 'none';
+                    document.getElementById('creator-box').style.display = 'none';
+                    document.getElementById('instructions').style.display = 'none';
+                    document.getElementById('social-proof').style.display = 'none';
+                    
+                    triggerConfetti(); // 🎆 अब चारों दिशाओं में फैलेंगे फटाके!
+                    
+                    document.getElementById('score-text').innerText = `अद्भुत! आपने यह सीक्रेट मैसेज सिर्फ ${totalTime} सेकंड में ढूंढ लिया। अब दोस्तों को चैलेंज दें!`;
+                    
+                    const shareText = `मैंने इस मजेदार गेम में ${totalTime} सेकंड में सीक्रेट मैसेज ढूंढ लिया! क्या तू मुझे हरा सकता है? खेलो यहाँ: ${window.location.href}`;
+                    whatsappShare.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+                    
+                    popup.classList.add('active');
+                }
+            }
+        });
+
+        // ओवरलैप रोकने वाला स्मार्ट वर्ड ड्रॉप फंक्शन
+        function dropWord(word, x, y) {
+            // जांच करें कि क्या आस-पास पहले से कोई शब्द छपा है
+            for (let pos of droppedPositions) {
+                let dist = Math.hypot(pos.x - x, pos.y - y);
+                if (dist < 60) {
+                    // अगर पास में है, तो थोड़ी जगह बदलकर छापें ताकि एक-दूसरे पर न चढ़ें
+                    x += (Math.random() - 0.5) * 80;
+                    y += (Math.random() - 0.5) * 80;
+                }
+            }
+            
+            droppedPositions.push({x, y});
+
+            const wordEl = document.createElement('div');
+            wordEl.className = 'story-word';
+            wordEl.innerText = word;
+            wordEl.style.left = x + 'px';
+            wordEl.style.top = y + 'px';
+            document.body.appendChild(wordEl);
+        }
+
+        function setTemplate(text) {
+            document.getElementById('customInput').value = text;
+        }
+
+        function makeCustom() {
+            const text = document.getElementById('customInput').value.trim();
+            if(!text) {
+                alert('कृपया पहले कुछ मैसेज लिखें या ऊपर से कोई टेम्पलेट चुनें!');
+                return;
+            }
+            const encoded = encodeSecret(text);
+            const baseUrl = window.location.href.split('?')[0];
+            const newUrl = baseUrl + '?msg=' + encoded;
+            
+            document.getElementById('homeGeneratedLink').value = newUrl;
+            document.getElementById('homeLinkBox').style.display = 'block';
+        }
+
+        function copyHomeLink() {
+            const copyText = document.getElementById('homeGeneratedLink');
+            copyText.select();
+            navigator.clipboard.writeText(copyText.value);
+            alert('लिंक कॉपी हो गया! अब इसे WhatsApp पर शेयर करें।');
+        }
+
+        function makeCustomFromPopup() {
+            const text = document.getElementById('popupCustomInput').value.trim();
+            if(!text) {
+                alert('कृपया पहले कुछ मैसेज लिखें!');
+                return;
+            }
+            const encoded = encodeSecret(text);
+            const baseUrl = window.location.href.split('?')[0];
+            const newUrl = baseUrl + '?msg=' + encoded;
+            
+            document.getElementById('popupGeneratedLink').value = newUrl;
+            document.getElementById('popupLinkBox').style.display = 'block';
+        }
+
+        function copyPopupLink() {
+            const copyText = document.getElementById('popupGeneratedLink');
+            copyText.select();
+            navigator.clipboard.writeText(copyText.value);
+            alert('लिंक कॉपी हो गया! अब इसे WhatsApp पर शेयर करें।');
+        }
+    </script>
+</body>
+</html>
